@@ -1,5 +1,5 @@
 /* ==========================================================
-   OSCA Nature Travel for Safari – script.js
+   Mambo Tanzania safaris – script.js
    ========================================================== */
 
 /* ----------------------------------------------------------
@@ -12,11 +12,11 @@
    Until a real number is added, the buttons show a reminder
    message instead of opening WhatsApp.
    ---------------------------------------------------------- */
-const WHATSAPP_NUMBER = "255783070362";
+const WHATSAPP_NUMBER = "255685645498";
 
 /* Message sent when someone presses the general contact button (EDIT if you like). */
 const GENERAL_MESSAGE =
-  "Hello OSCA Nature Travel for Safari, I would like to ask about your safari packages. Please share the available options, confirmed prices and availability.";
+  "Hello Mambo Tanzania safaris, I would like to ask about your safari packages. Please share the available options, confirmed prices and availability.";
 
 /* ----------------------------------------------------------
    2. REUSABLE WHATSAPP BOOKING FUNCTION
@@ -36,7 +36,7 @@ function openWhatsApp(message) {
 /* Builds the message for one package. EDIT the wording here if needed. */
 function bookPackage(packageName) {
   openWhatsApp(
-    "Hello OSCA Nature Travel for Safari, I am interested in the " + packageName +
+    "Hello Mambo Tanzania Safari, I am interested in the " + packageName +
     ". Please share the confirmed price, availability, itinerary and package inclusions."
   );
 }
