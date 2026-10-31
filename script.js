@@ -133,7 +133,7 @@
       ['ruaha','Ruaha'],
       ['kilimanjaro','Mount Kilimanjaro'],
       ['zanzibar','Zanzibar beach'],
-      ['culture','Tanzanian culture'],
+      ['maasai','Tanzanian culture'],
       ['wildlife','Wildlife']
     ];
 
