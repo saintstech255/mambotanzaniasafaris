@@ -1,0 +1,4 @@
+Add JPG photos with these exact names (licensed, e.g. your own or Unsplash/Pexels with attribution as required):
+hero-safari.jpg  wildlife.jpg  safari-vehicle.jpg  serengeti.jpg  ngorongoro.jpg  tarangire.jpg
+lake-manyara.jpg  mkomazi.jpg  mikumi.jpg  nyerere.jpg  udzungwa.jpg  ruaha.jpg
+kilimanjaro.jpg  zanzibar.jpg  culture.jpg
