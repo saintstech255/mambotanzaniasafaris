@@ -1,98 +1,278 @@
+
 /* ==========================================================
-   Mambo Tanzania safaris – script.js
+   MAMBO TANZANIA SAFARIS – SCRIPT.JS
+   WhatsApp Booking + Mobile Menu + Sun Journey Animation
    ========================================================== */
 
 /* ----------------------------------------------------------
-   1. WHATSAPP NUMBER  (EDIT THIS)
-   Replace the placeholder text between the quotes with the
-   company's WhatsApp number in INTERNATIONAL format, digits
-   only: no plus sign, no spaces, no dashes.
-   Tanzania example format: 2557XXXXXXXX  (country code 255,
-   then the number without its leading 0).
-   Until a real number is added, the buttons show a reminder
-   message instead of opening WhatsApp.
+   1. WHATSAPP SETTINGS
    ---------------------------------------------------------- */
+
 const WHATSAPP_NUMBER = "255685645498";
 
-/* Message sent when someone presses the general contact button (EDIT if you like). */
 const GENERAL_MESSAGE =
   "Hello Mambo Tanzania safaris, I would like to ask about your safari packages. Please share the available options, confirmed prices and availability.";
 
+
 /* ----------------------------------------------------------
-   2. REUSABLE WHATSAPP BOOKING FUNCTION
-   openWhatsApp("message text") opens WhatsApp with that message
-   already typed. The visitor must still press Send themselves.
+   2. WHATSAPP BOOKING
    ---------------------------------------------------------- */
+
 function openWhatsApp(message) {
-  // A valid number is 8 to 15 digits only.
   if (!/^\d{8,15}$/.test(WHATSAPP_NUMBER)) {
-    showToast("WhatsApp number not set yet. Open script.js and replace REPLACE_WITH_WHATSAPP_NUMBER with the company number (digits only, no plus sign).");
+    showToast("WhatsApp number is not set correctly.");
     return;
   }
-  const url = "https://wa.me/" + WHATSAPP_NUMBER + "?text=" + encodeURIComponent(message);
+
+  const url =
+    "https://wa.me/" +
+    WHATSAPP_NUMBER +
+    "?text=" +
+    encodeURIComponent(message);
+
   window.open(url, "_blank", "noopener");
 }
 
-/* Builds the message for one package. EDIT the wording here if needed. */
 function bookPackage(packageName) {
   openWhatsApp(
-    "Hello Mambo Tanzania Safari, I am interested in the " + packageName +
+    "Hello Mambo Tanzania Safari, I am interested in the " +
+    packageName +
     ". Please share the confirmed price, availability, itinerary and package inclusions."
   );
 }
 
+
 /* ----------------------------------------------------------
-   3. SMALL MESSAGE BAR
+   3. TOAST MESSAGE
    ---------------------------------------------------------- */
+
 let toastTimer;
+
 function showToast(text) {
   const toast = document.getElementById("toast");
+
   if (!toast) return;
+
   toast.textContent = text;
   toast.classList.add("show");
+
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(function () { toast.classList.remove("show"); }, 7000);
+
+  toastTimer = setTimeout(function () {
+    toast.classList.remove("show");
+  }, 7000);
 }
 
+
 /* ----------------------------------------------------------
-   4. PAGE SETUP (runs when the page has loaded)
+   4. SUN JOURNEY ANIMATION
    ---------------------------------------------------------- */
+
+function initSunJourney() {
+  const journey = document.querySelector(".sun-journey");
+
+  if (!journey) return;
+
+  const sun = journey.querySelector(".sun");
+  const moon = journey.querySelector(".moon");
+  const sky = journey.querySelector(".sky");
+  const stars = journey.querySelector(".stars");
+
+  if (!sun || !moon || !sky || !stars) return;
+
+  const reducedMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)"
+  ).matches;
+
+  let ticking = false;
+
+  function updateJourney() {
+    const scrollableHeight =
+      document.documentElement.scrollHeight - window.innerHeight;
+
+    const progress = scrollableHeight > 0
+      ? Math.min(1, Math.max(0, window.scrollY / scrollableHeight))
+      : 0;
+
+    /*
+      SUN MOVEMENT
+      Starts in the upper sky and moves towards the horizon.
+    */
+
+    const sunTop = 15 + progress * 82;
+    const sunLeft = 70 - progress * 38;
+
+    sun.style.top = sunTop + "%";
+    sun.style.left = sunLeft + "%";
+
+    /*
+      SKY COLOUR TRANSITIONS
+      Morning -> Midday -> Sunset -> Night
+    */
+
+    let skyColor;
+
+    if (progress < 0.35) {
+      skyColor = `
+        linear-gradient(
+          to bottom,
+          #65b9e8 0%,
+          #a9d9ed 55%,
+          #f5d49a 100%
+        )
+      `;
+    } else if (progress < 0.65) {
+      skyColor = `
+        linear-gradient(
+          to bottom,
+          #f4a66d 0%,
+          #e98a68 55%,
+          #7b557e 100%
+        )
+      `;
+    } else {
+      skyColor = `
+        linear-gradient(
+          to bottom,
+          #111c3b 0%,
+          #25294d 55%,
+          #49365e 100%
+        )
+      `;
+    }
+
+    sky.style.background = skyColor;
+
+    /*
+      SUNLIGHT FADES AS NIGHT APPROACHES
+    */
+
+    const sunOpacity = Math.max(
+      0,
+      1 - Math.max(0, (progress - 0.48) / 0.17)
+    );
+
+    sun.style.opacity = sunOpacity;
+
+    /*
+      MOON APPEARS DURING TWILIGHT
+    */
+
+    const moonOpacity = Math.min(
+      1,
+      Math.max(0, (progress - 0.55) / 0.18)
+    );
+
+    moon.style.opacity = moonOpacity;
+
+    /*
+      STARS GRADUALLY APPEAR
+    */
+
+    const starsOpacity = Math.min(
+      1,
+      Math.max(0, (progress - 0.58) / 0.20)
+    );
+
+    stars.style.opacity = starsOpacity;
+
+    ticking = false;
+  }
+
+  function requestUpdate() {
+    if (reducedMotion || ticking) return;
+
+    ticking = true;
+    window.requestAnimationFrame(updateJourney);
+  }
+
+  window.addEventListener("scroll", requestUpdate, {
+    passive: true
+  });
+
+  window.addEventListener("resize", requestUpdate);
+
+  updateJourney();
+}
+
+
+/* ----------------------------------------------------------
+   5. PAGE SETUP
+   ---------------------------------------------------------- */
+
 document.addEventListener("DOMContentLoaded", function () {
 
-  // "Book This Safari" buttons: each uses its data-package name from index.html
+  // Safari booking buttons
+
   document.querySelectorAll(".book-btn").forEach(function (button) {
     button.addEventListener("click", function () {
       bookPackage(button.dataset.package);
     });
   });
 
-  // General "Contact Us on WhatsApp" button
+
+  // General WhatsApp contact button
+
   const contactButton = document.getElementById("contactWhatsApp");
+
   if (contactButton) {
     contactButton.addEventListener("click", function () {
       openWhatsApp(GENERAL_MESSAGE);
     });
   }
 
-  // Mobile menu open/close
+
+  // Mobile navigation
+
   const navToggle = document.getElementById("navToggle");
   const siteNav = document.getElementById("siteNav");
-  function setMenu(open) {
-    siteNav.classList.toggle("open", open);
-    navToggle.setAttribute("aria-expanded", String(open));
-    navToggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
-  }
-  navToggle.addEventListener("click", function () {
-    setMenu(!siteNav.classList.contains("open"));
-  });
-  siteNav.querySelectorAll("a").forEach(function (link) {
-    link.addEventListener("click", function () { setMenu(false); });
-  });
-  document.addEventListener("keydown", function (event) {
-    if (event.key === "Escape") setMenu(false);
-  });
 
-  // Footer year updates itself
+  if (navToggle && siteNav) {
+
+    function setMenu(open) {
+      siteNav.classList.toggle("open", open);
+
+      navToggle.setAttribute(
+        "aria-expanded",
+        String(open)
+      );
+
+      navToggle.setAttribute(
+        "aria-label",
+        open ? "Close menu" : "Open menu"
+      );
+    }
+
+    navToggle.addEventListener("click", function () {
+      setMenu(!siteNav.classList.contains("open"));
+    });
+
+    siteNav.querySelectorAll("a").forEach(function (link) {
+      link.addEventListener("click", function () {
+        setMenu(false);
+      });
+    });
+
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape") {
+        setMenu(false);
+      }
+    });
+  }
+
+
+  // Automatic footer year
+
   const year = document.getElementById("year");
-  if (year) year.textContent = new Date().getFullYear();
+
+  if (year) {
+    year.textContent = new Date().getFullYear();
+  }
+
+
+  // Start Sun Journey
+
+  initSunJourney();
+
 });
+
